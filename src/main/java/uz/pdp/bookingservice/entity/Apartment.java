@@ -5,7 +5,7 @@ import lombok.*;
 import uz.pdp.bookingservice.enums.ApartmentLevel;
 import uz.pdp.bookingservice.enums.ApartmentStatus;
 
-@Entity(name = "apartments")
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,7 +16,7 @@ public class Apartment extends BaseEntity{
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String description;
 
     @Column(nullable = false)

@@ -14,10 +14,10 @@ import java.util.UUID;
 @Builder
 public class Order extends BaseEntity{
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "uuid", name = "user_id")
     private UUID user;
 
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Apartment apartment;
 

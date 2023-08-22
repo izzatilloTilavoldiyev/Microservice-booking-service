@@ -1,15 +1,12 @@
-package uz.pdp.bookingservice.entity;
+package uz.pdp.bookingservice.dto.response;
 
-import jakarta.persistence.Entity;
 import lombok.*;
-
-@Entity(name = "attachments")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class Attachment extends BaseEntity {
+public class UploadAttachmentResponse {
     private String originalName;
     private String fileType;
     private Long size;

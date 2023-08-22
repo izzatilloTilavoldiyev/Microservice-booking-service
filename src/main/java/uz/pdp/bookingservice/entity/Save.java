@@ -13,10 +13,10 @@ import java.util.UUID;
 @Builder
 public class Save extends BaseEntity{
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "uuid")
     private UUID userId;
 
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Apartment apartment;
 }
