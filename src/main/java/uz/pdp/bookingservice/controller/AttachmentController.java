@@ -1,5 +1,6 @@
 package uz.pdp.bookingservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -26,6 +27,10 @@ public class AttachmentController {
      * @param file -> Multipart request file which contains the input send from user
      * @return UploadFileResponse which includes download url and file name
      */
+    @Operation(
+            description = "POST endpoint to upload any files. Max file size must be 300MB",
+            summary = "API to store file"
+    )
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UploadAttachmentResponse uploadFile(
             @RequestParam("file") MultipartFile file
@@ -33,6 +38,10 @@ public class AttachmentController {
         return attachmentService.saveFile(file);
     }
 
+    @Operation(
+            description = "GET endpoint to download file. You need to give original file name",
+            summary = "API to download file"
+    )
     @GetMapping("/download/{fileName}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
         Path file = attachmentService.downloadFile(fileName);

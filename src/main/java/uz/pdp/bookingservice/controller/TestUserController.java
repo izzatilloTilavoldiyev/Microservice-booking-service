@@ -2,6 +2,7 @@ package uz.pdp.bookingservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,11 +26,12 @@ public class TestUserController {
     }
 
     @GetMapping("/user/{userId}")
-    public User getUserFromUserService(
+    public ResponseEntity<User> getUserFromUserService(
             @PathVariable UUID userId
     ) {
-        return restTemplate.getForObject(
+        User testUser = restTemplate.getForObject(
                 userServiceUrl + "/get/" + userId, User.class);
+        return ResponseEntity.ok(testUser);
     }
 
 }
