@@ -1,7 +1,12 @@
 package uz.pdp.bookingservice.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
+
+import java.util.UUID;
 
 @Entity(name = "attachments")
 @AllArgsConstructor
@@ -9,9 +14,10 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class Attachment extends BaseEntity {
+public class Attachment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private String originalName;
-    private String fileType;
-    private Long size;
     private String fileDownloadUri;
 }

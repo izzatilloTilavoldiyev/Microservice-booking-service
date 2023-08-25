@@ -5,15 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import uz.pdp.bookingservice.dto.response.UploadAttachmentResponse;
 import uz.pdp.bookingservice.entity.Attachment;
+import uz.pdp.bookingservice.exception.DataNotFoundException;
 import uz.pdp.bookingservice.repository.AttachmentRepository;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Objects;
-
-import static uz.pdp.bookingservice.mapper.AttachmentMapper.ATTACHMENT_MAPPER;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class AttachmentService {
                 .toAbsolutePath().normalize();
     }
 
-    public UploadAttachmentResponse saveFile(MultipartFile file) {
+    public Attachment saveFile(MultipartFile file) {
         String fullFileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         try {
             Path targetLocation = fileLocation.resolve(fullFileName);
@@ -50,22 +49,21 @@ public class AttachmentService {
         }
         Attachment attachment = Attachment.builder()
                 .originalName(file.getOriginalFilename())
-                .fileType(file.getContentType())
                 .fileDownloadUri(fileLocation + "\\" + file.getOriginalFilename())
-                .size(file.getSize())
                 .build();
-        attachmentRepository.save(attachment);
 
-        return UploadAttachmentResponse.builder()
-                .originalName(attachment.getOriginalName())
-                .fileType(attachment.getFileType())
-                .fileDownloadUri(attachment.getFileDownloadUri())
-                .size(attachment.getSize())
-                .build();
+        return attachmentRepository.save(attachment);
     }
 
 
-    public Path downloadFile(String fileName) {
-        return fileLocation.resolve(fileName);
+    public Path downloadFile(UUID fileId) {
+        Attachment attachment = getAttachmentById(fileId);
+        return fileLocation.resolve(attachment.getOriginalName());
+    }
+
+    public Attachment getAttachmentById(UUID attachId) {
+        return attachmentRepository.findById(attachId).orElseThrow(
+                () -> new DataNotFoundException("Attachment not found with '" + attachId + "' id")
+        );
     }
 }
