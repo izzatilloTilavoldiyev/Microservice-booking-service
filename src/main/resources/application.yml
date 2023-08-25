@@ -2,7 +2,7 @@ server:
   port: 8081
 
 user-service:
-  url: http://USER-SERVICE/user
+  url: http://USER-SERVICE/api/v1/user
 
 spring:
   application:
