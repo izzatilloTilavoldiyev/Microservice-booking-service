@@ -4,11 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import uz.pdp.bookingservice.dto.request.ApartmentCreateRequest;
+import uz.pdp.bookingservice.dto.response.ApartmentResponseDTO;
 import uz.pdp.bookingservice.entity.Apartment;
 import uz.pdp.bookingservice.entity.Attachment;
 import uz.pdp.bookingservice.enums.ApartmentStatus;
+import uz.pdp.bookingservice.exception.BadRequestException;
+import uz.pdp.bookingservice.exception.DataNotFoundException;
 import uz.pdp.bookingservice.repository.ApartmentRepository;
 import uz.pdp.bookingservice.service.attachment.AttachmentService;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +26,26 @@ public class ApartmentServiceImpl implements ApartmentService{
     @Override
     public ApartmentCreateRequest save(ApartmentCreateRequest apartmentCreateRequest) {
         Apartment apartment = modelMapper.map(apartmentCreateRequest, Apartment.class);
+        if (apartment.getLevel() == null)
+            throw new BadRequestException("Apartment level: " + apartmentCreateRequest.getLevel() + " not supported");
         Attachment attachment = attachmentService
                 .getAttachmentById(apartmentCreateRequest.getAttachmentId());
         apartment.setAttachment(attachment);
         apartment.setStatus(ApartmentStatus.ACTIVE);
         Apartment savedApartment = apartmentRepository.save(apartment);
         return modelMapper.map(savedApartment, ApartmentCreateRequest.class);
+    }
+
+    @Override
+    public ApartmentResponseDTO getById(UUID apartmentID) {
+        Apartment apartment = getApartmentById(apartmentID);
+        return modelMapper.map(apartment, ApartmentResponseDTO.class);
+    }
+
+    private Apartment getApartmentById(UUID apartmentID) {
+        return apartmentRepository.findApartmentByIdAndDeletedFalse(apartmentID)
+                .orElseThrow(
+                        () -> new DataNotFoundException("Apartment not found with id: " + apartmentID)
+                );
     }
 }

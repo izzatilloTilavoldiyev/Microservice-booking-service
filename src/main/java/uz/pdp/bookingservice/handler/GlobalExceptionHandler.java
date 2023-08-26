@@ -1,5 +1,6 @@
 package uz.pdp.bookingservice.handler;
 
+import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,6 +33,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({BadRequestException.class})
     public ResponseEntity<ErrorMessage> badRequestExceptionHandler(RuntimeException e) {
+        ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity.status(400).body(message);
+    }
+
+    @ExceptionHandler({PSQLException.class})
+    public ResponseEntity<ErrorMessage> PSQLExceptionHandler(RuntimeException e) {
         ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
         return ResponseEntity.status(400).body(message);
     }

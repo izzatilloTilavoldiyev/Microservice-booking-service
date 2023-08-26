@@ -5,7 +5,7 @@ import lombok.*;
 import uz.pdp.bookingservice.enums.ApartmentLevel;
 import uz.pdp.bookingservice.enums.ApartmentStatus;
 
-@Entity
+@Entity(name = "apartment")
 @Getter
 @Setter
 @AllArgsConstructor
