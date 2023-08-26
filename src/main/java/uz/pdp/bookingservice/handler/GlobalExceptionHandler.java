@@ -36,10 +36,4 @@ public class GlobalExceptionHandler {
         ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
         return ResponseEntity.status(400).body(message);
     }
-
-    @ExceptionHandler({PSQLException.class})
-    public ResponseEntity<ErrorMessage> PSQLExceptionHandler(RuntimeException e) {
-        ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
-        return ResponseEntity.status(400).body(message);
-    }
 }

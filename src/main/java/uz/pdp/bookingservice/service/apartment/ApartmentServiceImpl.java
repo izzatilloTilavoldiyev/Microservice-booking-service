@@ -8,6 +8,7 @@ import uz.pdp.bookingservice.dto.request.ApartmentCreateRequest;
 import uz.pdp.bookingservice.dto.response.ApartmentResponseDTO;
 import uz.pdp.bookingservice.entity.Apartment;
 import uz.pdp.bookingservice.entity.Attachment;
+import uz.pdp.bookingservice.enums.ApartmentLevel;
 import uz.pdp.bookingservice.enums.ApartmentStatus;
 import uz.pdp.bookingservice.exception.BadRequestException;
 import uz.pdp.bookingservice.exception.DataNotFoundException;
@@ -57,6 +58,51 @@ public class ApartmentServiceImpl implements ApartmentService{
     public List<ApartmentResponseDTO> getAllDeleted(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         return apartmentRepository.findAllDeletedApartments(pageable)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Override
+    public List<ApartmentResponseDTO> getAllByLevel(Integer page, Integer size, ApartmentLevel level) {
+        Pageable pageable = PageRequest.of(page, size);
+        return apartmentRepository.findAllByLevel(pageable, level)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Override
+    public List<ApartmentResponseDTO> getAllActive(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return apartmentRepository.findAllActive(pageable)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Override
+    public List<ApartmentResponseDTO> getAllInactive(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return apartmentRepository.findAllInactive(pageable)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Override
+    public List<ApartmentResponseDTO> getAllBlocked(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return apartmentRepository.findAllBlocked(pageable)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Override
+    public List<ApartmentResponseDTO> getAllBooked(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return apartmentRepository.findAllBooked(pageable)
                 .stream()
                 .map(this::toDTO)
                 .toList();
