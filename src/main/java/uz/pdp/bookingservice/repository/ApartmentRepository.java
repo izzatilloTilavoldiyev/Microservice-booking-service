@@ -1,8 +1,10 @@
 package uz.pdp.bookingservice.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import uz.pdp.bookingservice.entity.Apartment;
 import uz.pdp.bookingservice.enums.ApartmentLevel;
@@ -37,5 +39,14 @@ public interface ApartmentRepository extends JpaRepository<Apartment, UUID> {
 
     @Query("from apartment a where a.status = 'BOOKED' and not a.deleted order by a.createdDate desc")
     Page<Apartment> findAllBooked(Pageable pageable);
+
+    @Transactional
+    @Modifying
+    @Query("update apartment a set a.deleted = true where a.id = :apartmentID")
+    void deleteApartmentById(UUID apartmentID);
+
+    @Query("select count(a)>0 from apartment a where a.deleted = false ")
+    boolean existsApartmentById(UUID apartmentID);
+
 
 }

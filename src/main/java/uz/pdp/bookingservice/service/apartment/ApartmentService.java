@@ -25,4 +25,6 @@ public interface ApartmentService {
     List<ApartmentResponseDTO> getAllBlocked(Integer page, Integer size);
 
     List<ApartmentResponseDTO> getAllBooked(Integer page, Integer size);
+
+    void delete(UUID apartmentID);
 }

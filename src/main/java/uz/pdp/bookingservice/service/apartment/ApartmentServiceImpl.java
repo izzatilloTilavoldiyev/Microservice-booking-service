@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ApartmentServiceImpl implements ApartmentService{
+public class ApartmentServiceImpl implements ApartmentService {
 
     private final ApartmentRepository apartmentRepository;
     private final AttachmentService attachmentService;
@@ -106,6 +106,13 @@ public class ApartmentServiceImpl implements ApartmentService{
                 .stream()
                 .map(this::toDTO)
                 .toList();
+    }
+
+    @Override
+    public void delete(UUID apartmentID) {
+        if(!apartmentRepository.existsApartmentById(apartmentID))
+            throw new DataNotFoundException("Apartment not found with id: " + apartmentID);
+        apartmentRepository.deleteApartmentById(apartmentID);
     }
 
     private Apartment getApartmentById(UUID apartmentID) {

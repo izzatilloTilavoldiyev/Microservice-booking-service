@@ -26,15 +26,15 @@ public class ApartmentController {
      * --- get all page
      * --- get all deleted
      * --- get all by apartment level
-     * get all active
-     * get all inactive
-     * get all blocked
-     * get all booked
+     * --- get all active
+     * --- get all inactive
+     * --- get all blocked
+     * --- get all booked
      *
      * update apartment
      * update status
      *
-     * delete
+     * --- delete
      */
 
     private final ApartmentService apartmentService;
@@ -157,6 +157,18 @@ public class ApartmentController {
     ) {
         List<ApartmentResponseDTO> bookedApartments = apartmentService.getAllBooked(page, size);
         return ResponseEntity.ok(bookedApartments);
+    }
+
+    @Operation(
+            description = "DELETE endpoint to delete apartment by id",
+            summary = "delete"
+    )
+    @DeleteMapping("/{apartmentID}")
+    public ResponseEntity<String> delete(
+            @PathVariable UUID apartmentID
+    ) {
+        apartmentService.delete(apartmentID);
+        return ResponseEntity.ok("Success");
     }
 
 }
