@@ -10,6 +10,7 @@ import uz.pdp.bookingservice.dto.request.ApartmentCreateRequest;
 import uz.pdp.bookingservice.dto.response.ApartmentResponseDTO;
 import uz.pdp.bookingservice.service.apartment.ApartmentService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,11 +19,10 @@ import java.util.UUID;
 public class ApartmentController {
 
     /**
-     * create
+     * --- create
      *
-     * get by id
-     * get by id and level
-     * get all page
+     * --- get by id
+     * --- get all page
      * get all deleted
      * get all by apartment level
      * get all active
@@ -64,5 +64,23 @@ public class ApartmentController {
     ) {
         ApartmentResponseDTO apartmentResponseDTO = apartmentService.getById(apartmentID);
         return ResponseEntity.ok(apartmentResponseDTO);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ApartmentResponseDTO>> getAll(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        List<ApartmentResponseDTO> allApartments = apartmentService.getAll(page, size);
+        return ResponseEntity.ok(allApartments);
+    }
+
+    @GetMapping("/all-deleted")
+    public ResponseEntity<List<ApartmentResponseDTO>> getAllDeleted(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        List<ApartmentResponseDTO> allDeletedApartments = apartmentService.getAllDeleted(page, size);
+        return ResponseEntity.ok(allDeletedApartments);
     }
 }
