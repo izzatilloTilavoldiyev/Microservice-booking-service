@@ -5,6 +5,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import uz.pdp.bookingservice.dto.request.ApartmentCreateRequest;
+import uz.pdp.bookingservice.dto.request.ApartmentUpdateDTO;
+import uz.pdp.bookingservice.dto.request.ApartmentUpdateUserDTO;
 import uz.pdp.bookingservice.dto.response.ApartmentResponseDTO;
 import uz.pdp.bookingservice.entity.Apartment;
 import uz.pdp.bookingservice.entity.Attachment;
@@ -12,8 +14,11 @@ import uz.pdp.bookingservice.enums.ApartmentLevel;
 import uz.pdp.bookingservice.enums.ApartmentStatus;
 import uz.pdp.bookingservice.exception.BadRequestException;
 import uz.pdp.bookingservice.exception.DataNotFoundException;
+import uz.pdp.bookingservice.exception.InvalidEnumValueException;
 import uz.pdp.bookingservice.repository.ApartmentRepository;
 import uz.pdp.bookingservice.service.attachment.AttachmentService;
+
+import static uz.pdp.bookingservice.utils.BeanUtil.isValidEnumValue;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,11 +31,13 @@ public class ApartmentServiceImpl implements ApartmentService {
     private final AttachmentService attachmentService;
     private final ModelMapper modelMapper;
 
+
+
     @Override
     public ApartmentCreateRequest save(ApartmentCreateRequest apartmentCreateRequest) {
         Apartment apartment = modelMapper.map(apartmentCreateRequest, Apartment.class);
-        if (apartment.getLevel() == null)
-            throw new BadRequestException("Apartment level: " + apartmentCreateRequest.getLevel() + " not supported");
+        if (!isValidEnumValue(ApartmentLevel.class, apartmentCreateRequest.getLevel()))
+            throw new InvalidEnumValueException("Invalid value provided with value: " + apartmentCreateRequest.getLevel());
         Attachment attachment = attachmentService
                 .getAttachmentById(apartmentCreateRequest.getAttachmentId());
         apartment.setAttachment(attachment);
@@ -109,6 +116,23 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
+    public ApartmentUpdateDTO updateForAdmin(UUID apartmentID, ApartmentUpdateDTO apartmentUpdateDTO) {
+        validateEnumFields(apartmentUpdateDTO.getStatus(), apartmentUpdateDTO.getLevel());
+        Apartment apartment = getAllApartmentById(apartmentID);
+        modelMapper.map(apartmentUpdateDTO, apartment);
+        Apartment savedApartment = apartmentRepository.save(apartment);
+        return modelMapper.map(savedApartment, ApartmentUpdateDTO.class);
+    }
+
+    @Override
+    public ApartmentUpdateUserDTO updateForUser(UUID apartmentID, ApartmentUpdateUserDTO apartmentUpdateUserDTO) {
+        Apartment apartment = getApartmentById(apartmentID);
+        modelMapper.map(apartmentUpdateUserDTO, apartment);
+        Apartment savedApartment = apartmentRepository.save(apartment);
+        return modelMapper.map(savedApartment, ApartmentUpdateUserDTO.class);
+    }
+
+    @Override
     public void delete(UUID apartmentID) {
         if(!apartmentRepository.existsApartmentById(apartmentID))
             throw new DataNotFoundException("Apartment not found with id: " + apartmentID);
@@ -116,7 +140,14 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     private Apartment getApartmentById(UUID apartmentID) {
-        return apartmentRepository.findApartmentById(apartmentID)
+        return apartmentRepository.findActiveApartmentById(apartmentID)
+                .orElseThrow(
+                        () -> new DataNotFoundException("Apartment not found with id: " + apartmentID)
+                );
+    }
+
+    public Apartment getAllApartmentById(UUID apartmentID) {
+        return apartmentRepository.findAllApartmentById(apartmentID)
                 .orElseThrow(
                         () -> new DataNotFoundException("Apartment not found with id: " + apartmentID)
                 );
@@ -124,5 +155,17 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     private ApartmentResponseDTO toDTO(Apartment apartment) {
         return modelMapper.map(apartment, ApartmentResponseDTO.class);
+    }
+
+    private void validateEnumFields(String status, String level) {
+        if (status != null)
+            if (!isValidEnumValue(ApartmentStatus.class, status)) {
+                throw new InvalidEnumValueException("Invalid value provided with value: " + status);
+            }
+
+        if (level != null)
+            if (!isValidEnumValue(ApartmentLevel.class, level)) {
+                throw new InvalidEnumValueException("Invalid value provided with value: " + level);
+            }
     }
 }

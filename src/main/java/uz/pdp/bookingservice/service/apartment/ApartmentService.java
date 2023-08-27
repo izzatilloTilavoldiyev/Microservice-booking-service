@@ -1,6 +1,8 @@
 package uz.pdp.bookingservice.service.apartment;
 
 import uz.pdp.bookingservice.dto.request.ApartmentCreateRequest;
+import uz.pdp.bookingservice.dto.request.ApartmentUpdateDTO;
+import uz.pdp.bookingservice.dto.request.ApartmentUpdateUserDTO;
 import uz.pdp.bookingservice.dto.response.ApartmentResponseDTO;
 import uz.pdp.bookingservice.enums.ApartmentLevel;
 
@@ -25,6 +27,10 @@ public interface ApartmentService {
     List<ApartmentResponseDTO> getAllBlocked(Integer page, Integer size);
 
     List<ApartmentResponseDTO> getAllBooked(Integer page, Integer size);
+
+    ApartmentUpdateDTO updateForAdmin(UUID apartmentID, ApartmentUpdateDTO apartmentUpdateDTO);
+
+    ApartmentUpdateUserDTO updateForUser(UUID apartmentID, ApartmentUpdateUserDTO apartmentUpdateUserDTO);
 
     void delete(UUID apartmentID);
 }
