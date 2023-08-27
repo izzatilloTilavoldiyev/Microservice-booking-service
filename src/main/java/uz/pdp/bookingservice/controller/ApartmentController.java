@@ -58,7 +58,7 @@ public class ApartmentController {
     }
 
     @Operation(
-            description = "GET endpoint to get apartment by ID",
+            description = "GET endpoint to get apartment by ID, This endpoint bring only ACTIVE apartment",
             summary = "get by ID"
     )
     @GetMapping("/{apartmentID}")
@@ -66,6 +66,18 @@ public class ApartmentController {
             @PathVariable UUID apartmentID
     ) {
         ApartmentResponseDTO apartmentResponseDTO = apartmentService.getById(apartmentID);
+        return ResponseEntity.ok(apartmentResponseDTO);
+    }
+
+    @Operation(
+            description = "GET endpoint to get apartment by ID, This endpoint for admin and bring every apartment",
+            summary = "get by ID for only admin"
+    )
+    @GetMapping("/admin/{apartmentID}")
+    public ResponseEntity<ApartmentResponseDTO> getByIdForAdmin(
+            @PathVariable UUID apartmentID
+    ) {
+        ApartmentResponseDTO apartmentResponseDTO = apartmentService.getByIdForAdmin(apartmentID);
         return ResponseEntity.ok(apartmentResponseDTO);
     }
 

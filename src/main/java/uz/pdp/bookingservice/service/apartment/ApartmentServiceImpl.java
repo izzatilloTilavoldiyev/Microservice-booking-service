@@ -53,6 +53,12 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
 
     @Override
+    public ApartmentResponseDTO getByIdForAdmin(UUID apartmentID) {
+        Apartment apartment = getAllApartmentById(apartmentID);
+        return modelMapper.map(apartment, ApartmentResponseDTO.class);
+    }
+
+    @Override
     public List<ApartmentResponseDTO> getAll(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         return apartmentRepository.findAllApartments(pageable)

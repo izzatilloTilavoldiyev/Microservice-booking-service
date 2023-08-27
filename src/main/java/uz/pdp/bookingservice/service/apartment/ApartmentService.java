@@ -14,6 +14,8 @@ public interface ApartmentService {
 
     ApartmentResponseDTO getById(UUID apartmentID);
 
+    ApartmentResponseDTO getByIdForAdmin(UUID apartmentID);
+
     List<ApartmentResponseDTO> getAll(Integer page, Integer size);
 
     List<ApartmentResponseDTO> getAllDeleted(Integer page, Integer size);
