@@ -56,10 +56,23 @@ public class SaveServiceImpl implements SaveService{
 
     }
 
+    @Override
+    public SaveResponseDTO getById(UUID saveID) {
+        Save save = getSaveById(saveID);
+        return modelMapper.map(save, SaveResponseDTO.class);
+    }
+
     private void checkSaveUnique(UUID userID, UUID apartmentID) {
         if (saveRepository.existsByUserIdAndApartmentId(userID, apartmentID))
             throw new DuplicateDataException(
                     "Apartment has already saved with userID: " +userID+ " and apartmentID: " + apartmentID);
+    }
+
+    private Save getSaveById(UUID saveID) {
+        return saveRepository.findById(saveID)
+                .orElseThrow(
+                        () -> new DataNotFoundException("Save not found with ID: " + saveID)
+                );
     }
 
 }
