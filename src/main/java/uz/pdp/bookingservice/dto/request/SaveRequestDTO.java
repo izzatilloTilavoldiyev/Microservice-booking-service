@@ -1,5 +1,6 @@
 package uz.pdp.bookingservice.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SaveRequestDTO {
-    private UUID userId;
-    private UUID apartmentId;
+    @NotNull(message = "UserId must not be null") private UUID userId;
+    @NotNull(message = "ApartmentId must not be null") private UUID apartmentId;
 }

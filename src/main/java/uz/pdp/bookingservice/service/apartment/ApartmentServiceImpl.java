@@ -12,7 +12,6 @@ import uz.pdp.bookingservice.entity.Apartment;
 import uz.pdp.bookingservice.entity.Attachment;
 import uz.pdp.bookingservice.enums.ApartmentLevel;
 import uz.pdp.bookingservice.enums.ApartmentStatus;
-import uz.pdp.bookingservice.exception.BadRequestException;
 import uz.pdp.bookingservice.exception.DataNotFoundException;
 import uz.pdp.bookingservice.exception.InvalidEnumValueException;
 import uz.pdp.bookingservice.repository.ApartmentRepository;
