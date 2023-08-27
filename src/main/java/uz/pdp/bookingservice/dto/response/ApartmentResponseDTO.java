@@ -3,7 +3,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.pdp.bookingservice.entity.Attachment;
 import uz.pdp.bookingservice.enums.ApartmentLevel;
 
 import java.time.LocalDateTime;

@@ -9,6 +9,7 @@ import uz.pdp.bookingservice.entity.ErrorMessage;
 import uz.pdp.bookingservice.exception.BadRequestException;
 import uz.pdp.bookingservice.exception.DataNotFoundException;
 import uz.pdp.bookingservice.exception.DuplicateDataException;
+import uz.pdp.bookingservice.exception.InvalidEnumValueException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,8 +26,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(409).body(message);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class})
-    public ResponseEntity<ErrorMessage> IllegalArgumentExceptionHandler(RuntimeException e) {
+    @ExceptionHandler({InvalidEnumValueException.class})
+    public ResponseEntity<ErrorMessage> invalidEnumValueExceptionHandler(RuntimeException e) {
         ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
         return ResponseEntity.status(400).body(message);
     }
