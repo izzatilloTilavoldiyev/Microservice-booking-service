@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.bookingservice.dto.request.ApartmentCreateRequest;
+import uz.pdp.bookingservice.dto.request.ApartmentUpdateDTO;
+import uz.pdp.bookingservice.dto.request.ApartmentUpdateUserDTO;
 import uz.pdp.bookingservice.dto.response.ApartmentResponseDTO;
 import uz.pdp.bookingservice.enums.ApartmentLevel;
 import uz.pdp.bookingservice.service.apartment.ApartmentService;
@@ -31,8 +33,8 @@ public class ApartmentController {
      * --- get all blocked
      * --- get all booked
      *
-     * update apartment
-     * update status
+     * --- update apartment for admin
+     * --- update apartment for user
      *
      * --- delete
      */
@@ -169,6 +171,32 @@ public class ApartmentController {
     ) {
         apartmentService.delete(apartmentID);
         return ResponseEntity.ok("Success");
+    }
+
+    @Operation(
+            description = "PUT endpoint to update apartment for admin",
+            summary = "update for admin"
+    )
+    @PutMapping("/admin/{apartmentID}")
+    public ResponseEntity<ApartmentUpdateDTO> updateForAdmin(
+            @PathVariable UUID apartmentID,
+            @RequestBody ApartmentUpdateDTO apartmentUpdateDTO
+    ) {
+        ApartmentUpdateDTO updatedApartment = apartmentService.updateForAdmin(apartmentID, apartmentUpdateDTO);
+        return ResponseEntity.ok(updatedApartment);
+    }
+
+    @Operation(
+            description = "PUT endpoint to update apartment for user",
+            summary = "update for admin"
+    )
+    @PutMapping("/user/{apartmentID}")
+    public ResponseEntity<ApartmentUpdateUserDTO> updateForUser(
+            @PathVariable UUID apartmentID,
+            @RequestBody ApartmentUpdateUserDTO apartmentUpdateUserDTO
+    ) {
+        ApartmentUpdateUserDTO updatedApartment = apartmentService.updateForUser(apartmentID, apartmentUpdateUserDTO);
+        return ResponseEntity.ok(updatedApartment);
     }
 
 }

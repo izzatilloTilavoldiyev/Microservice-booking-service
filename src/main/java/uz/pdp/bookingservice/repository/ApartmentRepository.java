@@ -16,7 +16,10 @@ public interface ApartmentRepository extends JpaRepository<Apartment, UUID> {
 
     @Query("from apartment a where a.id = :apartmentId " +
             "and a.status = 'ACTIVE' and not a.deleted")
-    Optional<Apartment> findApartmentById(UUID apartmentId);
+    Optional<Apartment> findActiveApartmentById(UUID apartmentId);
+
+    @Query("from apartment a where a.id = :apartmentId and not a.deleted")
+    Optional<Apartment> findAllApartmentById(UUID apartmentId);
 
     @Query("from apartment a where not a.deleted order by a.createdDate desc")
     Page<Apartment> findAllApartments(Pageable pageable);
