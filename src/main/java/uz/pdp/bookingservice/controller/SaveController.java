@@ -24,9 +24,9 @@ public class SaveController {
      *
      * --- get by id
      * --- get user's saved apartments
-     * get all saved apartments
+     * --- get all saved apartments
      *
-     * delete
+     * --- delete
      */
 
     private final SaveService saveService;
