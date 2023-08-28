@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
-    // Class methods go here
+    boolean existsByUserIdAndApartmentId(UUID userId, UUID apartment_id);
 }

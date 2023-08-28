@@ -3,12 +3,9 @@ package uz.pdp.bookingservice.service.save;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import uz.pdp.bookingservice.dto.request.SaveRequestDTO;
 import uz.pdp.bookingservice.dto.response.SaveResponseDTO;
 import uz.pdp.bookingservice.entity.Apartment;
@@ -16,7 +13,6 @@ import uz.pdp.bookingservice.entity.Save;
 import uz.pdp.bookingservice.entity.User;
 import uz.pdp.bookingservice.exception.DataNotFoundException;
 import uz.pdp.bookingservice.exception.DuplicateDataException;
-import uz.pdp.bookingservice.repository.ApartmentRepository;
 import uz.pdp.bookingservice.repository.SaveRepository;
 import uz.pdp.bookingservice.service.apartment.ApartmentServiceImpl;
 import uz.pdp.bookingservice.service.user.UserService;
@@ -40,13 +36,11 @@ public class SaveServiceImpl implements SaveService {
     public SaveResponseDTO addToSave(SaveRequestDTO saveRequestDTO) {
         checkSaveUnique(saveRequestDTO.getUserId(), saveRequestDTO.getApartmentId());
 
-        User user = userService.getUserById(saveRequestDTO.getUserId());
+        userService.checkUserExists(saveRequestDTO.getUserId());
         Apartment apartment = apartmentService.getApartmentById(saveRequestDTO.getApartmentId());
 
-        Save save = Save.builder()
-                .userId(user.getId())
-                .apartment(apartment)
-                .build();
+        Save save = modelMapper.map(saveRequestDTO, Save.class);
+        save.setApartment(apartment);
 
         saveRepository.save(save);
         return modelMapper.map(save, SaveResponseDTO.class);
