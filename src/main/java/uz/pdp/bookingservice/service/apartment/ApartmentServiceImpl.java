@@ -144,7 +144,7 @@ public class ApartmentServiceImpl implements ApartmentService {
         apartmentRepository.deleteApartmentById(apartmentID);
     }
 
-    private Apartment getApartmentById(UUID apartmentID) {
+    public Apartment getApartmentById(UUID apartmentID) {
         return apartmentRepository.findActiveApartmentById(apartmentID)
                 .orElseThrow(
                         () -> new DataNotFoundException("Apartment not found with id: " + apartmentID)

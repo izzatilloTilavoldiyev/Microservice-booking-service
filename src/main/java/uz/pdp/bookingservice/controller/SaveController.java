@@ -13,6 +13,7 @@ import uz.pdp.bookingservice.dto.request.SaveRequestDTO;
 import uz.pdp.bookingservice.dto.response.SaveResponseDTO;
 import uz.pdp.bookingservice.service.save.SaveService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,7 +24,7 @@ public class SaveController {
     /**
      * --- add to save
      *
-     * get by id
+     * --- get by id
      * get user's saved apartments
      * get all saved apartments
      *
@@ -54,6 +55,20 @@ public class SaveController {
     ) {
         SaveResponseDTO saveResponseDTO = saveService.getById(saveID);
         return ResponseEntity.ok(saveResponseDTO);
+    }
+
+    @Operation(
+            description = "GET endpoint to get all user's saved apartments",
+            summary = "all user's saved apartments"
+    )
+    @GetMapping("/all-user-saved/{userID}")
+    public ResponseEntity<List<SaveResponseDTO>> getUserSavedApartments(
+            @PathVariable UUID userID,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        List<SaveResponseDTO> userSavedApartments = saveService.getUserSavedApartments(userID, page, size);
+        return ResponseEntity.ok(userSavedApartments);
     }
 
 }

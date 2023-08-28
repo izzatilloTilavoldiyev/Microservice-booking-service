@@ -4,6 +4,8 @@ package uz.pdp.bookingservice.service.save;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -16,43 +18,38 @@ import uz.pdp.bookingservice.exception.DataNotFoundException;
 import uz.pdp.bookingservice.exception.DuplicateDataException;
 import uz.pdp.bookingservice.repository.ApartmentRepository;
 import uz.pdp.bookingservice.repository.SaveRepository;
+import uz.pdp.bookingservice.service.apartment.ApartmentServiceImpl;
+import uz.pdp.bookingservice.service.user.UserService;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class SaveServiceImpl implements SaveService{
+public class SaveServiceImpl implements SaveService {
 
-    private final RestTemplate restTemplate;
-
-    private final ApartmentRepository apartmentRepository;
+    private final ApartmentServiceImpl apartmentService;
 
     private final SaveRepository saveRepository;
 
     private final ModelMapper modelMapper;
 
-    @Value("${user-service.url}")
-    private String userServiceUrl;
+    private final UserService userService;
 
     @Override
     public SaveResponseDTO addToSave(SaveRequestDTO saveRequestDTO) {
         checkSaveUnique(saveRequestDTO.getUserId(), saveRequestDTO.getApartmentId());
-        try {
-            User user = restTemplate.getForObject(userServiceUrl + "/get/"
-                    + saveRequestDTO.getUserId(), User.class);
-            Apartment apartment = apartmentRepository.findActiveApartmentById(saveRequestDTO.getApartmentId())
-                    .orElseThrow(
-                            () -> new DataNotFoundException("Apartment not found with ID: " + saveRequestDTO.getApartmentId())
-                    );
-            Save save = Save.builder()
-                    .userId(user.getId())
-                    .apartment(apartment)
-                    .build();
-            saveRepository.save(save);
-            return modelMapper.map(save, SaveResponseDTO.class);
-        } catch (HttpClientErrorException.NotFound ex) {
-            throw new DataNotFoundException("User not found with ID: " + saveRequestDTO.getUserId());
-        }
+
+        User user = userService.getUserById(saveRequestDTO.getUserId());
+        Apartment apartment = apartmentService.getApartmentById(saveRequestDTO.getApartmentId());
+
+        Save save = Save.builder()
+                .userId(user.getId())
+                .apartment(apartment)
+                .build();
+
+        saveRepository.save(save);
+        return modelMapper.map(save, SaveResponseDTO.class);
 
     }
 
@@ -62,10 +59,20 @@ public class SaveServiceImpl implements SaveService{
         return modelMapper.map(save, SaveResponseDTO.class);
     }
 
+    @Override
+    public List<SaveResponseDTO> getUserSavedApartments(UUID userID, Integer page, Integer size) {
+        userService.checkUserExists(userID);
+        Pageable pageable = PageRequest.of(page, size);
+        return saveRepository.findAllByUserIdOrderByCreatedDate(userID, pageable)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
     private void checkSaveUnique(UUID userID, UUID apartmentID) {
         if (saveRepository.existsByUserIdAndApartmentId(userID, apartmentID))
             throw new DuplicateDataException(
-                    "Apartment has already saved with userID: " +userID+ " and apartmentID: " + apartmentID);
+                    "Apartment has already saved with userID: " + userID + " and apartmentID: " + apartmentID);
     }
 
     private Save getSaveById(UUID saveID) {
@@ -73,6 +80,10 @@ public class SaveServiceImpl implements SaveService{
                 .orElseThrow(
                         () -> new DataNotFoundException("Save not found with ID: " + saveID)
                 );
+    }
+
+    private SaveResponseDTO toDTO(Save save) {
+        return modelMapper.map(save, SaveResponseDTO.class);
     }
 
 }
