@@ -13,4 +13,8 @@ public interface SaveService {
     SaveResponseDTO getById(UUID saveID);
 
     List<SaveResponseDTO> getUserSavedApartments(UUID userID, Integer page, Integer size);
+
+    List<SaveResponseDTO> getAllSavedApartments(Integer page, Integer size);
+
+    void delete(UUID saveID);
 }

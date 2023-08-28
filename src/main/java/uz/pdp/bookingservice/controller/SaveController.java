@@ -2,10 +2,8 @@ package uz.pdp.bookingservice.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +23,7 @@ public class SaveController {
      * --- add to save
      *
      * --- get by id
-     * get user's saved apartments
+     * --- get user's saved apartments
      * get all saved apartments
      *
      * delete
@@ -69,6 +67,31 @@ public class SaveController {
     ) {
         List<SaveResponseDTO> userSavedApartments = saveService.getUserSavedApartments(userID, page, size);
         return ResponseEntity.ok(userSavedApartments);
+    }
+
+    @Operation(
+            description = "GET endpoint to get all saved apartments",
+            summary = "get all"
+    )
+    @GetMapping("/all")
+    public ResponseEntity<List<SaveResponseDTO>> getAllSavedApartments(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        List<SaveResponseDTO> allSavedApartments = saveService.getAllSavedApartments(page, size);
+        return ResponseEntity.ok(allSavedApartments);
+    }
+
+    @Operation(
+            description = "DELETE endpoint to delete save by saveID",
+            summary = "delete"
+    )
+    @DeleteMapping("/{saveID}")
+    public ResponseEntity<String> delete(
+            @PathVariable UUID saveID
+    ) {
+        saveService.delete(saveID);
+        return ResponseEntity.ok("Successfully deleted");
     }
 
 }

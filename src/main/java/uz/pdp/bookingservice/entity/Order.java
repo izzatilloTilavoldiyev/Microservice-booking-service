@@ -18,7 +18,7 @@ public class Order extends BaseEntity{
     private UUID user;
 
     @JoinColumn(nullable = false)
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Apartment apartment;
 
     @Column(nullable = false)

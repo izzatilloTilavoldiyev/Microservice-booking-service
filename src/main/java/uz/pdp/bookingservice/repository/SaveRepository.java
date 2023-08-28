@@ -10,5 +10,7 @@ import java.util.UUID;
 public interface SaveRepository extends JpaRepository<Save, UUID> {
     boolean existsByUserIdAndApartmentId(UUID userId, UUID apartment_id);
 
-    List<Save> findAllByUserIdOrderByCreatedDate(UUID userId, Pageable pageable);
+    List<Save> findAllByUserIdOrderByCreatedDateDesc(UUID userId, Pageable pageable);
+
+    List<Save> findAllByOrderByCreatedDateDesc(Pageable pageable);
 }

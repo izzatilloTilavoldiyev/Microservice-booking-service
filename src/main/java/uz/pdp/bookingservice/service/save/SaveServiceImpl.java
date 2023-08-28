@@ -63,10 +63,25 @@ public class SaveServiceImpl implements SaveService {
     public List<SaveResponseDTO> getUserSavedApartments(UUID userID, Integer page, Integer size) {
         userService.checkUserExists(userID);
         Pageable pageable = PageRequest.of(page, size);
-        return saveRepository.findAllByUserIdOrderByCreatedDate(userID, pageable)
+        return saveRepository.findAllByUserIdOrderByCreatedDateDesc(userID, pageable)
                 .stream()
                 .map(this::toDTO)
                 .toList();
+    }
+
+    @Override
+    public List<SaveResponseDTO> getAllSavedApartments(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return saveRepository.findAllByOrderByCreatedDateDesc(pageable)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Override
+    public void delete(UUID saveID) {
+        Save save = getSaveById(saveID);
+        saveRepository.deleteById(save.getId());
     }
 
     private void checkSaveUnique(UUID userID, UUID apartmentID) {

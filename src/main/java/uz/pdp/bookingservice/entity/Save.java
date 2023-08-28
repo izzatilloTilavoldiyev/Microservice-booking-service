@@ -17,6 +17,6 @@ public class Save extends BaseEntity{
     private UUID userId;
 
     @JoinColumn(nullable = false)
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Apartment apartment;
 }
