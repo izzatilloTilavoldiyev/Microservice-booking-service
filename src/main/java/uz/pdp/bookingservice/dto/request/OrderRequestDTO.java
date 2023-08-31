@@ -33,7 +33,7 @@ public class OrderRequestDTO {
     )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull(message = "Check-in date must not be null")
-    private LocalDateTime checkInDate;
+    private String checkInDate;
 
     @Schema(
             description = "Check-out date in format  yyyy-MM-dd",
@@ -41,5 +41,6 @@ public class OrderRequestDTO {
     )
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull(message = "Check-out date must not be null")
-    private LocalDateTime checkOutDate;
+    private String checkOutDate;
+    //changed LocalDateTime to String
 }
